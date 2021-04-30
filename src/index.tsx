@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom";
 import { useState, useEffect, useRef } from "react";
 import * as esbuild from "esbuild-wasm";
+import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin";
 
 const App: React.FC = () => {
   const [input, setInput] = useState<string>("");
@@ -23,12 +24,14 @@ const App: React.FC = () => {
       return;
     }
 
-    const result = await serviceRef.current.transform(input, {
-      loader: "jsx",
-      target: "es2015",
+    const result = await serviceRef.current.build({
+      entryPoints: ["index.js"],
+      bundle: true,
+      write: false,
+      plugins: [unpkgPathPlugin()],
     });
 
-    setCode(result.code);
+    console.log(result);
   };
 
   return (
